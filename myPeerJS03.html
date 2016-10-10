@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+
+<script src="http://cdn.peerjs.com/0.3/peer.js"></script>
+<script type="text/javascript">
+
+var conn,conn1 =null;
+var enteredId;
+
+//Create the Peer Object 
+var enteredId = prompt("Please enter PeerJS ID or Cancel to let make automatic one:", "BOBO");
+
+if (enteredId == null) {
+	
+	var peer = new Peer({
+	// Set API key for cloud server (you don't need this if you're running your
+	// own.
+	key: 'lwjd5qra8257b9',
+	// Set highest debug level (log everything!).
+	debug: 3
+	});
+	}else{
+	alert(enteredId);
+	var peer = new Peer(enteredId
+	// Set API key for cloud server (you don't need this if you're running your
+	// own.
+	,{
+	key: 'lwjd5qra8257b9',
+	// Set highest debug level (log everything!).
+	debug: 3
+	});
+	}
+
+/*Every Peer object is assigned a random, 
+unique ID when it's created. */
+
+peer.on('open', function(id) {
+  document.getElementById("yourId").value=id
+});
+    
+
+peer.on('connection', connect);
+function connect(c) {
+    conn = c ;
+    c.on('data', function(data) {
+    console.log('Received', data);
+    document.getElementById("ReceivedText").value=data;
+    });
+}
+
+
+
+function ConnectToOtherId()  {
+	conn = peer.connect(document.getElementById("OtherId").value);
+	conn.on('open', function(){
+		conn.send("Other says: HI");    
+	});
+}
+
+function SendToOtherId()  {
+	//before send you must connect or it will be one way
+	conn = peer.connect(conn.peer);
+	conn.on('open', function(){
+		conn.send(document.getElementById("SendText").value);    
+	});
+}
+</script>
+<h1>My First PeerJs</h1>
+<h2>PeerJs based on WebRTC P2P connection</h2>    
+
+<p>Connection Start Part</p>
+
+
+YourId:<br>
+<input type="text" id="yourId">
+<br><br>
+OtherId:<br>
+<input type="text" id="OtherId">
+<br><br>
+<button type="button" id="ConnectToOtherIdBtn" onclick="ConnectToOtherId()">Connect</button>
+<br><br>
+    
+</br></br>    
+<p>Simple Send and Receive Part</p>
+
+Received Text:<br>
+<input type="text" id="ReceivedText">
+<br><br>
+Send Text:<br>
+<input type="text" id="SendText">
+<br><br>
+<button type="button" id="SendToOtherIdBtn" onclick="SendToOtherId()">Send</button>
+<br><br>
+
+</body>
+</html>
